@@ -1,7 +1,12 @@
 all: build
 
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 build:
-	@go build -o ./bin/main main.go
+	cd $(ROOT_DIR)/src; go build -o $(ROOT_DIR)/bin/main main.go
 
 run: build
-	./bin/main
+	$(ROOT_DIR)/bin/main
+	
+clean:
+	rm -r bin

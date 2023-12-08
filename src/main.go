@@ -27,7 +27,7 @@ var content embed.FS
 type txn struct {
 	Source  string
 	Id      int64
-	Payload []byte
+	Payload string
 }
 
 var snapshot []byte
@@ -91,7 +91,7 @@ func applyTxns() {
 		if t.Source == *source && t.Id == -1 {
 			t.Id = vclock[*source]
 		}
-		patch, err := jsonpatch.DecodePatch(t.Payload)
+		patch, err := jsonpatch.DecodePatch([]byte(t.Payload))
 		if err != nil {
 			log.Println("Appplier: Error occured while decoding patch")
 			continue
@@ -207,7 +207,7 @@ func main() {
 			w.Write([]byte("Error occured while reading body"))
 			return
 		}
-		txnQueue <- txn{Source: *source, Id: -1, Payload: bodyBytes}
+		txnQueue <- txn{Source: *source, Id: -1, Payload: string(bodyBytes)}
 		w.WriteHeader(http.StatusOK)
 	})
 	log.Fatal(http.ListenAndServe(addr, m))
